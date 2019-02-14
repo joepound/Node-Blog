@@ -28,7 +28,7 @@ server.use(morgan("dev"));
 server.use(uppercaseNames);
 
 // custom routing middleware
-// server.use("/api/users/", userRoutes);
+server.use("/api/users/", userRoutes);
 // server.use("/api/posts", postRoutes);
 server.use("/", rootRoute);
 
