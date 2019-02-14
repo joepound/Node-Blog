@@ -12,20 +12,22 @@ router.get("/:id/posts", async (req, res) => {
     const user = await userDB.getById(id);
 
     if (user) {
-      console.log(`\nAttempting to GET posts from user with ID [${id}]...`);
+      console.log(
+        `User found; attempting to GET posts from user with ID [${id}]...`
+      );
 
       try {
         const posts = await userDB.getUserPosts(id);
         res.status(200).json({
           success: true,
           posts
-        })
+        });
       } catch {
         const code = 500;
         res.status(code).json({
           success: false,
           code,
-          errorInfo: errors.getUserPostsFailure
+          errorInfo: errors.GET_USER_POSTS_FAILURE
         });
       }
     } else {
@@ -33,7 +35,7 @@ router.get("/:id/posts", async (req, res) => {
       res.status(code).json({
         success: false,
         code,
-        errorInfo: errors.getIndividualUserNotFound
+        errorInfo: errors.GET_INDIVIDUAL_USER_NOT_FOUND
       });
     }
   } catch (err) {
@@ -41,12 +43,12 @@ router.get("/:id/posts", async (req, res) => {
     res.status(code).json({
       success: false,
       code,
-      errorInfo: errors.getIndividualUserFailure
+      errorInfo: errors.GET_INDIVIDUAL_USER_FAILURE
     });
   } finally {
     console.log(`GET attempt for posts by user ID [${id}] finished.`);
   }
-})
+});
 
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
@@ -65,7 +67,7 @@ router.get("/:id", async (req, res) => {
       res.status(code).json({
         success: false,
         code,
-        errorInfo: errors.getIndividualUserNotFound
+        errorInfo: errors.GET_INDIVIDUAL_USER_NOT_FOUND
       });
     }
   } catch (err) {
@@ -73,7 +75,7 @@ router.get("/:id", async (req, res) => {
     res.status(code).json({
       success: false,
       code,
-      errorInfo: errors.getIndividualUserFailure
+      errorInfo: errors.GET_INDIVIDUAL_USER_FAILURE
     });
   } finally {
     console.log(`GET attempt for user ID [${id}] finished.`);
@@ -93,10 +95,42 @@ router.get("/", async (req, res) => {
     res.status(code).json({
       success: false,
       code,
-      errorInfo: errors.getAllUsersFailure
+      errorInfo: errors.GET_ALL_USERS_FAILURE
     });
   } finally {
     console.log("GET all users attempt finished.");
+  }
+});
+
+router.post("/", async (req, res) => {
+  console.log("\nAttempting to POST new user...");
+
+  const { name } = req.body;
+
+  if (name) {
+    try {
+      const user = await userDB.insert({ name });
+      res.status(201).json({
+        success: true,
+        user
+      });
+    } catch {
+      const code = 500;
+      res.status(code).json({
+        success: false,
+        code,
+        errorInfo: errors.POST_USER_FAILURE
+      });
+    } finally {
+      console.log("\nUser POST attempt finished.");
+    }
+  } else {
+    const code = 400;
+    res.status(code).json({
+      success: false,
+      code,
+      errorInfo: errors.POST_USER_NO_NAME
+    });
   }
 });
 
