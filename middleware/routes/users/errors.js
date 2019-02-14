@@ -12,5 +12,10 @@ module.exports = {
   getIndividualUserFailure: {
     title: "User GET (individual): failure",
     description: "Could not retrieve information on the specified user. "
+  },
+
+  getUserPostsFailure: {
+    title: "User posts GET failure",
+    description: "Could not retrieve posts by the specified user."
   }
 };
