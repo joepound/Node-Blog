@@ -1,6 +1,16 @@
 module.exports = {
   getAllUsersFailure: {
-    title: "User GET failure (all)",
-    description: "Could not retrieve information from all users."
+    title: "User GET (all): failure",
+    description: "Could not retrieve user database information."
+  },
+
+  getIndividualUserNotFound: {
+    title: "User GET (individual): not found",
+    description: "No user with the supplied ID exists."
+  },
+
+  getIndividualUserFailure: {
+    title: "User GET (individual): failure",
+    description: "Could not retrieve information on the specified user. "
   }
 };

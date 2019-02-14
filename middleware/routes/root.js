@@ -3,7 +3,7 @@ const router = express.Router();
 
 router.get("/", (req, res) => {
   res.send(`
-    <h2>Node Blog</h2>
+    <h1>Node Blog</h1>
     <p>Welcome to the Node Blog!</p>
   `)
 });

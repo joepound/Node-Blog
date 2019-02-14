@@ -1,6 +1,6 @@
 module.exports = (req, res) => {
   res.status(400).send(`
-    <h2>Code 400</h2>
+    <h1>Code 400</h1>
     <p>Invalid request/URL.</p>
   `);
 };
