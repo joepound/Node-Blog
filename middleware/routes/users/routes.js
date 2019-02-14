@@ -108,21 +108,46 @@ router.post("/", async (req, res) => {
   const { name } = req.body;
 
   if (name) {
+    console.log("Checking if user is unique...");
     try {
-      const user = await userDB.insert({ name });
-      res.status(201).json({
-        success: true,
-        user
-      });
-    } catch {
+      const users = await userDB.get();
+
+      const nameInUse = users.some(user => user.name === name);
+      if (nameInUse) {
+        const code = 400;
+        res.status(code).json({
+          success: false,
+          code,
+          error: errors.POST_USER_NAME_IN_USE
+        });
+        console.log("User POST attempt finished.");
+      } else {
+        try {
+          const user = await userDB.insert({ name });
+          res.status(201).json({
+            success: true,
+            user
+          });
+        } catch {
+          const code = 500;
+          res.status(code).json({
+            success: false,
+            code,
+            errorInfo: errors.POST_USER_FAILURE
+          });
+        } finally {
+          console.log("User POST attempt finished.");
+        }
+      }
+    } catch (err) {
       const code = 500;
       res.status(code).json({
         success: false,
         code,
-        errorInfo: errors.POST_USER_FAILURE
+        error: errors.POST_USER_DUPLICATES_CHECK_FAILURE
       });
     } finally {
-      console.log("\nUser POST attempt finished.");
+      console.log("User POST attempt finished.");
     }
   } else {
     const code = 400;
@@ -131,7 +156,12 @@ router.post("/", async (req, res) => {
       code,
       errorInfo: errors.POST_USER_NO_NAME
     });
+    console.log("User POST attempt finished.");
   }
+});
+
+router.put("/:id", (req, res) => {
+  console.log("\nAttempting to PUT user information updates...");
 });
 
 module.exports = router;

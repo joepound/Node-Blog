@@ -24,11 +24,21 @@ module.exports = {
     description: "No name was supplied for the new user.",
     recoveryInstructions: "Please supply a name and try again."
   },
-  
+
+  POST_USER_NAME_IN_USE: {
+    title: "User POST: name in use",
+    description: "The name supplied for the new user is already in use.",
+    recoveryInstructions: "Please supply a different name and try again."
+  },
+
+  POST_USER_DUPLICATES_CHECK_FAILURE: {
+    title: "User POST: cannot check for duplicates",
+    description:
+      "Could not create user - operation aborted because the user database could not be scanned for duplicate names."
+  },
+
   POST_USER_FAILURE: {
     title: "User POST: failure",
     description: "Could not create user."
   }
-
-
 };
