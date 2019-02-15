@@ -295,7 +295,7 @@ router.delete("/:id", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  
+
   console.log(`\nAttempting to PUT information updates for user ID [${id}]...`);
 
   const { name } = req.body;
@@ -327,7 +327,10 @@ router.put("/:id", async (req, res) => {
               if (updateCount === 1) {
                 res.status(200).json({
                   success: true,
-                  user
+                  user: {
+                    ...user,
+                    name
+                  }
                 });
               } else {
                 const code = 500;

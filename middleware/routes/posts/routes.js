@@ -135,7 +135,7 @@ router.delete("/:id", async (req, res) => {
     const post = await postDB.getById(id);
 
     if (post) {
-      console.log("Proceeding to delete user...");
+      console.log("Proceeding to delete post...");
       try {
         const deletionCount = await postDB.remove(id);
 
@@ -188,6 +188,71 @@ router.put("/:id", async (req, res) => {
   console.log(`\nAttempting to PUT information updates for post ID [${id}]...`);
 
   const { text } = req.body;
+
+  console.log("Checking if text content was supplied...");
+  if (text) {
+    console.log("Checking if specified post exists...");
+    try {
+      const post = await postDB.getById(id);
+
+      if (post) {
+        console.log("Proceeding to update post...");
+        try {
+          const updateCount = await postDB.update(id, { text });
+
+          if (updateCount === 1) {
+            res.status(200).json({
+              success: true,
+              post: {
+                ...post,
+                text
+              }
+            });
+          } else {
+            const code = 500;
+            res.status(code).json({
+              success: false,
+              code,
+              errorInfo: updateCount
+                ? errors.PUT_POST_MULTIPLE_UPDATED_ENTRIES
+                : errors.PUT_POST_NO_UPDATED_ENTRIES
+            });
+          }
+        } catch (err) {
+          const code = 500;
+          res.status(code).json({
+            success: false,
+            code,
+            errorInfo: errors.PUT_POST_FAILURE
+          });
+        }
+      } else {
+        const code = 404;
+        res.status(code).json({
+          success: false,
+          code,
+          errorInfo: errors.PUT_POST_NOT_FOUND
+        });
+      }
+    } catch (err) {
+      const code = 404;
+      res.status(code).json({
+        success: false,
+        code,
+        errorInfo: errors.PUT_POST_EXISTENCE_CHECK_FAILURE
+      });
+    } finally {
+      console.log(`PUT attempt for post ID [${id}] finished.`);
+    }
+  } else {
+    const code = 400;
+    res.status(code).json({
+      success: false,
+      code,
+      errorInfo: errors.PUT_POST_NO_TEXT_CONTENT
+    });
+    console.log(`PUT attempt for post ID [${id}] finished.`);
+  }
 });
 
 module.exports = router;
