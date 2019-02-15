@@ -107,8 +107,9 @@ router.post("/", async (req, res) => {
 
   const { name } = req.body;
 
+  console.log("Checking if name was supplied...");
   if (name) {
-    console.log("Checking if user is unique...");
+    console.log("Checking if supplied name is unique...");
     try {
       const users = await userDB.get();
 
@@ -120,7 +121,6 @@ router.post("/", async (req, res) => {
           code,
           error: errors.POST_USER_NAME_IN_USE
         });
-        console.log("User POST attempt finished.");
       } else {
         try {
           const user = await userDB.insert({ name });
@@ -128,15 +128,13 @@ router.post("/", async (req, res) => {
             success: true,
             user
           });
-        } catch {
+        } catch (err) {
           const code = 500;
           res.status(code).json({
             success: false,
             code,
             errorInfo: errors.POST_USER_FAILURE
           });
-        } finally {
-          console.log("User POST attempt finished.");
         }
       }
     } catch (err) {
@@ -144,7 +142,7 @@ router.post("/", async (req, res) => {
       res.status(code).json({
         success: false,
         code,
-        error: errors.POST_USER_DUPLICATES_CHECK_FAILURE
+        error: errors.POST_USER_DUPLICATE_NAMES_CHECK_FAILURE
       });
     } finally {
       console.log("User POST attempt finished.");
@@ -160,8 +158,86 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", async (req, res) => {
   console.log("\nAttempting to PUT user information updates...");
+
+  const { id } = req.params;
+  const { name } = req.body;
+
+  console.log("Checking if name was supplied...");
+  if (name) {
+    console.log("Checking if specified user exists...");
+    try {
+      const user = await userDB.getById(id);
+
+      if (user) {
+        console.log("Checking if supplied name is unique...");
+        try {
+          const users = await userDB.get();
+
+          const nameInUse = users.some(user => user.name === name);
+          if (nameInUse) {
+            const code = 400;
+            res.status(code).json({
+              success: false,
+              code,
+              error: errors.PUT_USER_NAME_IN_USE
+            });
+          } else {
+            const updateCount = await userDB.update(id, { name });
+
+            if (updateCount === 1) {
+              res.status(200).json({
+                success: true,
+                user
+              });
+            } else {
+              const code = 500;
+              res.status(code).json({
+                success: false,
+                code,
+                error:
+                  updateCount > 1
+                    ? errors.PUT_USER_MULTIPLE_UPDATED_ENTRIES
+                    : errors.PUT_USER_NO_UPDATED_ENTRIES
+              });
+            }
+          }
+        } catch (err) {
+          const code = 500;
+          res.status(code).json({
+            success: false,
+            code,
+            error: errors.PUT_USER_DUPLICATE_NAMES_CHECK_FAILURE
+          });
+        }
+      } else {
+        const code = 404;
+        res.status(code).json({
+          success: false,
+          code,
+          error: errors.PUT_USER_NOT_FOUND
+        });
+      }
+    } catch {
+      const code = 500;
+      res.status(code).json({
+        success: false,
+        code,
+        error: errors.PUT_USER_EXISTENCE_CHECK_FAILURE
+      });
+    } finally {
+      console.log("User PUT attempt finished.");
+    }
+  } else {
+    const code = 400;
+    res.status(code).json({
+      success: false,
+      code,
+      errorInfo: errors.PUT_USER_NO_NAME
+    });
+    console.log("User PUT attempt finished.");
+  }
 });
 
 module.exports = router;
