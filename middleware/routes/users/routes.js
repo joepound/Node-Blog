@@ -126,6 +126,7 @@ router.post("/", async (req, res) => {
           errorInfo: errors.POST_USER_NAME_IN_USE
         });
       } else {
+        console.log("Proceeding to create user...");
         try {
           const user = await userDB.insert({ name });
           res.status(201).json({

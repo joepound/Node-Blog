@@ -59,4 +59,78 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.post("/", async (req, res) => {
+  console.log("\nAttempting to POST new post...");
+
+  const { text, user_id } = req.body;
+
+  console.log(
+    "Checking if text content and associated user ID were supplied..."
+  );
+  if (!text) {
+    const code = 400;
+    res.status(code).json({
+      success: false,
+      code,
+      errorInfo: errors.POST_POST_NO_TEXT_CONTENT
+    });
+    console.log("Post POST attempt finished.");
+  } else if (!user_id) {
+    const code = 400;
+    res.status(code).json({
+      success: false,
+      code,
+      errorInfo: errors.POST_POST_NO_ASSOCIATED_USER
+    });
+    console.log("Post POST attempt finished.");
+  } else {
+    console.log("Checking if associated user ID exists...");
+    try {
+      const idToCheck = await userDB.getById(user_id);
+
+      if (idToCheck) {
+        console.log("Proceeding to create post...");
+        try {
+          const post = await postDB.insert({ text, user_id });
+          res.status(201).json({
+            success: true,
+            post
+          })
+        } catch (err) {
+          const code = 500;
+          res.status(code).json({
+            success: false,
+            code,
+            errorInfo: errors.POST_POST_FAILURE
+          });
+        }
+      } else {
+        const code = 400;
+        res.status(code).json({
+          success: false,
+          code,
+          errorInfo: errors.POST_POST_NO_ASSOCIATED_USER
+        });
+      }
+    } catch {
+      const code = 500;
+      res.status(code).json({
+        success: false,
+        code,
+        errorInfo: errors.POST_POST_USER_ID_CHECK_FAILURE
+      });
+    } finally {
+      console.log("Post POST attempt finished.");
+    }
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  console.log(`\nAttempting to DELETE post ID [${id}]...`);
+});
+
+router.put("/:id", async (req, res) => {
+  console.log(`\nAttempting to PUT information updates for post ID [${id}]...`);
+});
+
 module.exports = router;
