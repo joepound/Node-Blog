@@ -13,6 +13,7 @@ router.get("/:id/posts", async (req, res) => {
   try {
     const user = await userDB.getById(id);
 
+    console.log("Checking if specified user exists...");
     if (user) {
       console.log(
         `User found; attempting to GET posts from user with ID [${id}]...`
@@ -59,6 +60,7 @@ router.get("/:id", async (req, res) => {
   try {
     const user = await userDB.getById(id);
 
+    console.log("Checking if specified user exists...");
     if (user) {
       res.status(200).json({
         success: true,
