@@ -3,6 +3,7 @@ const router = express.Router();
 
 const userDB = require("./dbHelper");
 const postDB = require("../posts/dbHelper");
+
 const errors = require("./errors");
 
 router.get("/:id/posts", async (req, res) => {
