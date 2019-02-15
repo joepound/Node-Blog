@@ -295,9 +295,10 @@ router.delete("/:id", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { name } = req.body;
-
+  
   console.log(`\nAttempting to PUT information updates for user ID [${id}]...`);
+
+  const { name } = req.body;
 
   console.log("Checking if name was supplied...");
   if (name) {

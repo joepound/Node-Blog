@@ -45,5 +45,34 @@ module.exports = {
   POST_POST_FAILURE: {
     title: "Post POST: failure",
     description: "Could not create post due to an internal server error."
+  },
+
+  DELETE_POST_NOT_FOUND: {
+    title: "Post DELETE: post not found",
+    description: "No post with the supplied ID exists",
+    recoveryInstructions: "Please ensure that the correct post ID is supplied."
+  },
+
+  DELETE_POST_EXISTENCE_CHECK_FAILURE: {
+    title: "Post DELETE: could not check post information",
+    description:
+      "Could not check the post database due to an internal server error."
+  },
+
+  DELETE_POST_NO_DELETED_ENTRIES: {
+    title: "Post DELETE: no post entries deleted",
+    description:
+      "The specified post was found in the post database but could not be deleted due to an internal server error."
+  },
+
+  DELETE_POST_MULTIPLE_DELETED_ENTRIES: {
+    title: "Post DELETE: multiple post entries deleted",
+    description:
+      "Multiple post entries were deleted due to an internal server error. We are sorry for the inconvenience."
+  },
+
+  DELETE_POST_FAILURE: {
+    title: "Post DELETE: failure",
+    description: "Could not delete post due to an internal server error."
   }
 };

@@ -95,7 +95,7 @@ router.post("/", async (req, res) => {
           res.status(201).json({
             success: true,
             post
-          })
+          });
         } catch (err) {
           const code = 500;
           res.status(code).json({
@@ -126,11 +126,68 @@ router.post("/", async (req, res) => {
 });
 
 router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+
   console.log(`\nAttempting to DELETE post ID [${id}]...`);
+
+  console.log("Checking if specified post exists...");
+  try {
+    const post = await postDB.getById(id);
+
+    if (post) {
+      console.log("Proceeding to delete user...");
+      try {
+        const deletionCount = await postDB.remove(id);
+
+        if (deletionCount === 1) {
+          res.status(200).json({
+            success: true,
+            post
+          });
+        } else {
+          const code = 500;
+          res.status(code).json({
+            success: false,
+            code,
+            errorInfo: deletionCount
+              ? errors.DELETE_POST_MULTIPLE_DELETED_ENTRIES
+              : errors.DELETE_POST_NO_DELETED_ENTRIES
+          });
+        }
+      } catch (err) {
+        const code = 500;
+        res.status(code).json({
+          success: false,
+          code,
+          errorInfo: errors.DELETE_POST_FAILURE
+        });
+      }
+    } else {
+      const code = 404;
+      res.status(code).json({
+        success: false,
+        code,
+        errorInfo: errors.DELETE_POST_NOT_FOUND
+      });
+    }
+  } catch (err) {
+    const code = 404;
+    res.status(code).json({
+      success: false,
+      code,
+      errorInfo: errors.DELETE_USER_EXISTENCE_CHECK_FAILURE
+    });
+  } finally {
+    console.log(`DELETE attempt for post ID [${id}] finished.`);
+  }
 });
 
 router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+
   console.log(`\nAttempting to PUT information updates for post ID [${id}]...`);
+
+  const { text } = req.body;
 });
 
 module.exports = router;
